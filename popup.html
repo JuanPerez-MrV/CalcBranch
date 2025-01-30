@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="bootstrap.min.css" rel="stylesheet">
+        <link href="popup.css" rel="stylesheet">
+        <title>Calculadora</title>
+</head>
+
+<body class="m-1">
+        <table class="table text-center">
+                <!-- Pantalla -->
+                <tr>
+                        <td colspan="4">
+                                <input type="text" class="form-control" id="valor_numero" maxlength="20" value="0"
+                                        readonly="true">
+                        </td>
+                </tr>
+                <!-- Fila ANS -->
+                <tr>
+                        <td colspan="2">
+                                <input type="Button" class="btn btn-info w-100" id="Ans" value="ANS">
+                        </td>
+                        <td colspan="2">
+                                <input type="Button" class="btn btn-danger w-100" id="C" value="C">
+                        </td>
+                </tr>
+                <!-- Operadores superiores -->
+                <tr>
+                        <td>
+                                <input type="Button" class="btn btn-secondary w-100" id="parentesisAbrir" value="(">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-secondary w-100" id="parentesisCerrar" value=")">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-secondary w-100" id="Elevar" value="^">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-secondary w-100" id="Dividir" value="/">
+                        </td>
+                </tr>
+                <!-- Números y operadores -->
+                <tr>
+                        <td>
+                                <input type="Button" class="btn btn-light w-100" id="7" value="7">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-light w-100" id="8" value="8">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-light w-100" id="9" value="9">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-secondary w-100" id="Multiplicar" value="*">
+                        </td>
+                </tr>
+                <tr>
+                        <td>
+                                <input type="Button" class="btn btn-light w-100" id="4" value="4">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-light w-100" id="5" value="5">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-light w-100" id="6" value="6">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-secondary w-100" id="Restar" value="-">
+                        </td>
+                </tr>
+                <tr>
+                        <td>
+                                <input type="Button" class="btn btn-light w-100" id="1" value="1">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-light w-100" id="2" value="2">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-light w-100" id="3" value="3">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-secondary w-100" id="Sumar" value="+">
+                        </td>
+                </tr>
+                <tr>
+                        <td colspan="2">
+                                <input type="Button" class="btn btn-light w-100" id="0" value="0">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-light w-100" id="." value=".">
+                        </td>
+                        <td>
+                                <input type="Button" class="btn btn-primary w-100" id="EsIgual" value="=">
+                        </td>
+                </tr>
+        </table>
+        <script src="popup.js"></script>
+</body>
+
+</html>
