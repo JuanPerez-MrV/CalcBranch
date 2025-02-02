@@ -1,16 +1,16 @@
-// Declaración de variables
-let expresion = ""; // Expresión matemática como cadena
-let resultadoPrevio = false; // Indica si el último cálculo generó un resultado
-let ultimoResultado = "0"; // Almacena el último resultado calculado
+// Declaracion de variables
+let expresion = ""; // Expresion matematica como cadena
+let resultadoPrevio = false; // Indica si el ultimo calculo genero un resultado
+let ultimoResultado = "0"; // Almacena el ultimo resultado calculado
 
-// Función para manejar la entrada de números y operadores
+// Funcion para manejar la entrada de numeros y operadores
 function agregarEntrada(entrada) {
   if (resultadoPrevio && entrada !== "ANS") {
     if (["+", "-", "*", "/", "^"].includes(entrada)) {
-      // Si es un operador, mantenemos la expresión actual (que es el resultado).
+      // Si es un operador, mantenemos la expresion actual (que es el resultado).
       resultadoPrevio = false;
     } else {
-      // Si es un número u otro carácter, reiniciamos la expresión.
+      // Si es un numero u otro caracter, reiniciamos la expresion.
       expresion = "";
     }
   }
@@ -25,26 +25,26 @@ function agregarEntrada(entrada) {
   refrescar();
 }
 
-// Función que resetea la calculadora
+// Funcion que resetea la calculadora
 function darC() {
   expresion = "";
   resultadoPrevio = false;
   refrescar();
 }
 
-// Función para evaluar la expresión
+// Funcion para evaluar la expresion
 function esIgual() {
   try {
     const tokens = tokenizarExpresion(expresion);
     if (!tokens.length) {
-      throw new Error("Expresión vacía");
+      throw new Error("Expresion vacia");
     }
 
     const arbol = construirArbol(tokens);
     const resultado = resolverArbol(arbol);
 
     if (isNaN(resultado) || !isFinite(resultado)) {
-      throw new Error("Resultado inválido");
+      throw new Error("Resultado invalido");
     }
 
     ultimoResultado = resultado.toString();
@@ -59,8 +59,8 @@ function esIgual() {
 }
 
 /**
- * Función para tokenizar la expresión.
- * Se asegura de unir el signo '-' a un número cuando corresponde
+ * Funcion para tokenizar la expresion.
+ * Se asegura de unir el signo '-' a un numero cuando corresponde
  * (p.ej. "-1" en lugar de separar '-' y '1').
  *
  * Ejemplo: "32-33" -> ["32", "-", "33"]
@@ -128,7 +128,7 @@ function tokenizarExpresion(exp) {
   return tokens;
 }
 
-// Clase para representar un nodo del árbol de expresiones
+// Clase para representar un nodo del arbol de expresiones
 class Nodo {
   constructor(valor, izquierdo = null, derecho = null) {
     this.valor = valor;
@@ -137,7 +137,7 @@ class Nodo {
   }
 }
 
-// Función para construir el árbol de expresiones (Shunting Yard + construcción)
+// Funcion para construir el arbol de expresiones (Shunting Yard + construccion)
 function construirArbol(tokens) {
   const operadores = [];
   const operandos = [];
@@ -153,7 +153,7 @@ function construirArbol(tokens) {
 
   for (const token of tokens) {
     if (!isNaN(token)) {
-      // Es un número
+      // Es un numero
       operandos.push(new Nodo(parseFloat(token)));
     } else if (token === "(") {
       operadores.push(token);
@@ -181,11 +181,11 @@ function construirArbol(tokens) {
     aplicarOperador();
   }
 
-  // Devuelve la raíz del árbol
+  // Devuelve la raiz del arbol
   return operandos.pop();
 }
 
-// Función para resolver el árbol de expresiones (recorrido recursivo)
+// Funcion para resolver el arbol de expresiones (recorrido recursivo)
 function resolverArbol(nodo) {
   if (!nodo.izquierdo && !nodo.derecho) {
     return nodo.valor;
@@ -202,12 +202,11 @@ function resolverArbol(nodo) {
     case "*":
       return izquierdo * derecho;
     case "/":
-      if (derecho === 0) throw new Error("División por cero");
+      if (derecho === 0) throw new Error("Division por cero");
       return izquierdo / derecho;
     case "^":
-      // Validate square root operations
       if (derecho === 0.5) {
-        if (izquierdo < 0) throw new Error("Raíz cuadrada de número negativo");
+        if (izquierdo < 0) throw new Error("Raiz cuadrada de numero negativo");
         return Math.sqrt(izquierdo);
       }
       return Math.pow(izquierdo, derecho);
@@ -216,7 +215,7 @@ function resolverArbol(nodo) {
   }
 }
 
-// Función para refrescar el display
+// Funcion para refrescar el display
 function refrescar() {
   document.getElementById("valor_numero").value = expresion || "0";
 }
