@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "CalcBrnach",
+  "name": "CalcBranch",
   "version": "1.0",
   "description": "Extension de calculadora con funciones especiales",
   "icons": {

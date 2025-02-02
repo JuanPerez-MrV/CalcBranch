@@ -36,16 +36,22 @@ function darC() {
 function esIgual() {
   try {
     const tokens = tokenizarExpresion(expresion);
+    if (!tokens.length) {
+      throw new Error("Expresión vacía");
+    }
+
     const arbol = construirArbol(tokens);
     const resultado = resolverArbol(arbol);
 
-    // Si todo va bien, actualizamos el último resultado.
+    if (isNaN(resultado) || !isFinite(resultado)) {
+      throw new Error("Resultado inválido");
+    }
+
     ultimoResultado = resultado.toString();
     expresion = ultimoResultado;
     resultadoPrevio = true;
     refrescar();
   } catch (error) {
-    // Si hay error, mostramos "Error" pero no pisamos el último resultado válido.
     expresion = "Error";
     refrescar();
     resultadoPrevio = true;
@@ -62,25 +68,57 @@ function esIgual() {
  *          "(-2)*3" -> ["(", "-2", ")", "*", "3"]
  */
 function tokenizarExpresion(exp) {
-  // Primero, separamos en tokens usando dígitos, punto decimal y operadores.
-  const rawTokens = exp.match(/\d+(\.\d+)?|[\+\-\*\/\^\(\)]/g) || [];
-
-  // Post-proceso para unir un signo '-' que sea verdaderamente un número negativo.
+  const rawTokens = exp.match(/\d+(\.\d+)?|[\+\-\*\/\^\(\)√π]|ANS/g) || [];
   const tokens = [];
+
   for (let i = 0; i < rawTokens.length; i++) {
     let token = rawTokens[i];
 
-    // Si encontramos un "-" suelto, hay que revisar si es un número negativo
-    // (caso: posición 0, o precedido de un operador o '(' ) y lo siguiente es un número.
+    if (token === "π") {
+      tokens.push(Math.PI.toString());
+      continue;
+    }
+
+    // Enhanced sqrt handling with proper nested expression support
+    if (token === "√") {
+      tokens.push("(");
+      if (i + 1 < rawTokens.length) {
+        const nextToken = rawTokens[++i];
+        if (nextToken === "(") {
+          let parenCount = 1;
+          // Process nested expression token by token
+          while (i + 1 < rawTokens.length && parenCount > 0) {
+            token = rawTokens[++i];
+            if (token === "(") {
+              parenCount++;
+              tokens.push(token);
+            } else if (token === ")") {
+              parenCount--;
+              if (parenCount > 0) {
+                tokens.push(token);
+              }
+            } else {
+              tokens.push(token);
+            }
+          }
+        } else {
+          tokens.push(nextToken);
+        }
+      }
+      tokens.push(")");
+      tokens.push("^");
+      tokens.push("0.5");
+      continue;
+    }
+
+    // Handle negative numbers
     if (
       token === "-" &&
-      (i === 0 || // Está al inicio
+      (i === 0 ||
         ["+", "-", "*", "/", "^", "("].includes(tokens[tokens.length - 1])) &&
-      // Verificamos que exista un siguiente token y sea número
       i + 1 < rawTokens.length &&
       !isNaN(rawTokens[i + 1])
     ) {
-      // Unimos '-' con el siguiente token numérico.
       token = "-" + rawTokens[++i];
     }
 
@@ -149,7 +187,6 @@ function construirArbol(tokens) {
 
 // Función para resolver el árbol de expresiones (recorrido recursivo)
 function resolverArbol(nodo) {
-  // Si es una hoja, es un número
   if (!nodo.izquierdo && !nodo.derecho) {
     return nodo.valor;
   }
@@ -165,8 +202,14 @@ function resolverArbol(nodo) {
     case "*":
       return izquierdo * derecho;
     case "/":
+      if (derecho === 0) throw new Error("División por cero");
       return izquierdo / derecho;
     case "^":
+      // Validate square root operations
+      if (derecho === 0.5) {
+        if (izquierdo < 0) throw new Error("Raíz cuadrada de número negativo");
+        return Math.sqrt(izquierdo);
+      }
       return Math.pow(izquierdo, derecho);
     default:
       throw new Error(`Operador desconocido: ${nodo.valor}`);
@@ -178,55 +221,71 @@ function refrescar() {
   document.getElementById("valor_numero").value = expresion || "0";
 }
 
-// Asociar eventos a los botones
-document.addEventListener("DOMContentLoaded", () => {
-  const botones = document.querySelectorAll("input[type='button']");
-  botones.forEach((boton) => {
-    const valor = boton.value;
-    boton.addEventListener("click", () => {
-      if (valor === "=") {
-        esIgual();
-      } else if (valor === "C") {
-        darC();
-      } else if (valor === "ANS") {
-        agregarEntrada("ANS");
-      } else {
-        agregarEntrada(valor);
-      }
+// Action handlers object
+const actionHandlers = {
+  "=": () => esIgual(),
+  C: () => darC(),
+  ANS: () => agregarEntrada("ANS"),
+  "√": () => agregarEntrada("√"),
+  π: () => agregarEntrada("π"),
+  default: (value) => agregarEntrada(value),
+};
+
+// Keyboard mapping
+const keyboardMap = {
+  Enter: "=",
+  Backspace: "backspace",
+  c: "C",
+  a: "ANS",
+  r: "√",
+  p: "π",
+};
+
+// Event handlers
+function initializeEventHandlers() {
+  // Button clicks
+  document.querySelectorAll("input[type='button']").forEach((button) => {
+    button.addEventListener("click", () => {
+      const value = button.value;
+      (actionHandlers[value] || actionHandlers.default)(value);
     });
   });
 
-  // Evento para capturar teclas
+  // Keyboard input
   document.addEventListener("keydown", (event) => {
-    const tecla = event.key;
+    const key = event.key;
 
-    if (
-      !isNaN(tecla) ||
-      ["+", "-", "*", "/", "^", ".", "(", ")"].includes(tecla)
-    ) {
-      agregarEntrada(tecla);
-    } else if (tecla === "Enter") {
-      esIgual();
-    } else if (tecla === "Backspace") {
-      expresion = expresion.slice(0, -1);
-      refrescar();
-    } else if (tecla.toLowerCase() === "c") {
-      darC();
-    } else if (tecla.toLowerCase() === "a") {
-      agregarEntrada("ANS");
+    // Handle mapped keys
+    if (keyboardMap[key.toLowerCase()]) {
+      event.preventDefault();
+      if (key === "Backspace") {
+        expresion = expresion.slice(0, -1);
+        refrescar();
+        return;
+      }
+      const mappedValue = keyboardMap[key.toLowerCase()];
+      (actionHandlers[mappedValue] || actionHandlers.default)(mappedValue);
+      return;
+    }
+
+    // Handle numbers and operators
+    if (!isNaN(key) || ["+", "-", "*", "/", "^", ".", "(", ")"].includes(key)) {
+      event.preventDefault();
+      agregarEntrada(key);
     }
   });
 
-  // Agregar evento para pegar (Ctrl+V)
+  // Paste handler
   document.addEventListener("paste", (event) => {
     event.preventDefault();
-    const textoCopiado = event.clipboardData.getData("text");
+    const pastedText = event.clipboardData.getData("text");
 
-    // Validar que el texto pegado solo contenga caracteres válidos
-    const caracteresValidos = /^[0-9+\-*/().\s^]+$/;
-    if (caracteresValidos.test(textoCopiado)) {
-      expresion = textoCopiado.replace(/\s+/g, ""); // Eliminar espacios
+    if (/^[0-9+\-*/().\s^√π]+$/.test(pastedText)) {
+      expresion = pastedText.replace(/\s+/g, "");
       refrescar();
     }
   });
-});
+}
+
+// Initialize when DOM is ready
+document.addEventListener("DOMContentLoaded", initializeEventHandlers);
