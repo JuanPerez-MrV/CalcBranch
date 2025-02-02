@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "mi primera extension",
-  "version": "0.1",
-  "description": "Esta es mi primera extension",
+  "name": "CalcBranch",
+  "version": "1.0",
+  "description": "Extension de calculadora con funciones especiales",
   "icons": {
     "128": "icono.png"
   },
