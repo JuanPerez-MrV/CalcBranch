@@ -2,20 +2,50 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Currently supported versions of CalcBranch:
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+| 1.1.x   | :x:                |
+| 1.0.x   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+If you discover a security vulnerability within CalcBranch, please follow these steps:
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+1. **Do Not** disclose the vulnerability publicly
+2. Send a detailed report to juanp@email.com including:
+   - Description of the vulnerability
+   - Steps to reproduce
+   - Possible impact
+   - Suggested fixes (if any)
+
+### What to Expect
+
+- You will receive an acknowledgment within 48 hours
+- A detailed response within 1 week with next steps
+- Regular updates about the progress
+- Credit in the changelog if the vulnerability is accepted and fixed
+
+### Scope
+
+The following are considered in scope:
+
+- Calculator core logic (popup.js)
+- Input validation vulnerabilities
+- Cross-site scripting (XSS) in the extension interface
+
+Out of scope:
+
+- Issues in Bootstrap framework
+- Issues requiring physical access to the user's device
+- Social engineering attacks
+
+## Security Features
+
+CalcBranch implements these security measures:
+
+- Input sanitization for mathematical expressions
+- Restricted eval() usage
+- Content Security Policy (CSP) headers
+- Limited permissions in manifest.json
